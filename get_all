@@ -1,7 +1,0 @@
-#!/bin/bash
-expect harvest-p1
-wget -q ftp://amsterdamftp:8ypXXFmH@framus.dreamhost.com/rhla-daily.out
-mv -f rhla-daily.out ../records/rhla-part1.mrc
-expect harvest-p2
-wget -q ftp://amsterdamftp:8ypXXFmH@framus.dreamhost.com/rhla-daily.out
-mv -f rhla-daily.out ../records/rhla-part2.mrc
