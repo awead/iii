@@ -1,3 +1,4 @@
 *.swap
 config
 bash_config
+.DS_Store
