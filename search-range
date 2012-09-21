@@ -1,0 +1,165 @@
+#!/usr/bin/expect --
+# ------------------------------------------------------------
+# search-range
+# Adam Wead
+# Rock and Roll Hall of Fame
+#
+# Cribbed from:
+#   summonupd.exp
+#   Ian Richmond
+#
+# Description:
+#   Logs into Innopac server and retrieves marc records given
+#   a range of dates entered as arguments.
+#
+# Notes:
+#   Start the internal Expect diagnostics and send it to a file
+#     exp_internal -f create_dvd_list_diag 0
+#   Stop the internal diagnostics
+#     exp_internal 0
+# ------------------------------------------------------------
+
+# ------------------------------------------------------------
+#
+# Config
+#
+# ------------------------------------------------------------
+
+# Include our shared config file
+source "config"
+
+# Dates: taken from agruments passed to this script and must 
+# be in YYYYMMDD format.
+set fromdate [lindex $argv 0]
+set todate [lindex $argv 1]
+
+# ------------------------------------------------------------
+#
+# Main
+#
+# ------------------------------------------------------------
+
+# Start the SSH session, 5 possible responses:
+#   Option 1 - No SSH connection available
+#   Option 2 - Unknown host
+#   Option 3 - Not a familiar host
+#   Option 4 - Bad username
+#   Option 5 - Good connection
+
+spawn /usr/bin/ssh -l $un $hostip
+
+expect {
+  "Secure connection to * refused" exit
+  "no address associated with name" exit
+  "The authenticity of host*can't be established*Are you sure you want
+  to continue connecting" exit
+  "Permission denied" exit
+  "password: "
+}
+
+# Good username, now what about the pw?
+#  Option 1 - bad pw
+#  Option 2 - good username
+send "$pw\r"
+expect "Permission denied, please try again" {
+  send "\r\r"
+  exit
+} "Choose one (S,D,C,M,*" {
+  # Keep on going
+}
+
+# Navigate the menu to create lists
+send "m"
+expect "Choose one (I,A,G,P*"
+send "l"
+expect "your initials"
+send "$initials\r"
+expect "your password"
+send "$ipwd\r"
+
+# Select the list you have locked and empty it.
+expect "Choose one (1*"
+send "$listnumber"
+
+# What if the file is already empty?
+# Option 1 - file not empty
+# Option 2 - file empty
+expect "Choose one (T,P,S,L,*" {
+  send "n"
+  expect "Are you sure you want to delete the current review file? (y/n)"
+  send "y"
+} "Choose one (1,*" {
+  send "2"
+}
+
+# Create a new list
+expect "Choose one (B,O,C,A,*"
+send "b"
+
+# Search criteria
+expect "Find BIBLIOGRAPHIC records that satisfy the following conditions"
+send "06"
+expect "Enter boolean condition"
+send "~"
+expect "MAT TYPE <>"
+send "t"
+expect "Enter action"
+send "a"
+expect "Enter code"
+send "06"
+expect "Enter boolean condition"
+send "~"
+expect "MAT TYPE <>"
+send "r"
+expect "Enter action"
+send "a"
+expect "Enter code"
+send "05"
+expect "Enter boolean condition"
+send "~"
+expect "BIB LVL <>"
+send "c"
+expect "Enter action"
+send "a"
+expect "Enter code"
+send "03"
+expect "LOCATION"
+send "="
+expect "LOCATION ="
+send "rx\r"
+expect "Enter action"
+send "a"
+expect "Enter code"
+send "10"
+expect "Enter boolean condition"
+send ">"
+expect "CREATED"
+send "$fromdate"
+expect "Enter action"
+send "a"
+expect "Enter code"
+send "10"
+expect "Enter boolean condition"
+send "<"
+expect "CREATED"
+send "$todate"
+expect "Enter action"
+send "s"
+expect "What name would you like to give this file of records?"
+send "$recordlist\r"
+# Give the search as much time as it needs
+set timeout -1
+expect "Press <SPACE> to continue"
+
+# After it's done, back to main menu and quit
+set timeout 10
+send " "
+expect "Choose one (T,P,S,L,N*"
+send "q"
+expect "Choose one"
+send "q"
+expect "Choose one"
+send "q"
+expect "Choose one"
+send "q"
+exit 0

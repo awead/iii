@@ -1,0 +1,179 @@
+#!/usr/bin/expect --
+# -----------------------------------
+# download
+# Adam Wead
+# Rock and Roll Hall of Fame
+#
+# Description:
+#  Logs into Innopac server and retrieves marc records
+
+# Start the internal Expect diagnostics and send it to a file
+# exp_internal -f create_dvd_list_diag 0
+
+# Stop the internal diagnostics
+# exp_internal 0
+
+#
+# Config
+#
+
+# Innopac host ip
+set hostip "129.22.104.30"
+
+# Innopac usernamd and password (via SSH)
+set un "scirc"
+set pw "W1NZE"
+# Initials and Password, used once you're inside
+set initials "axw"
+set ipwd "Rhall11"
+# FTP Host
+set ftphost "framus.dreamhost.com"
+set ftpuser "amsterdamftp"
+set ftppass "8ypXXFmH"
+
+# Dates
+set todaysdate [exec date +%m.%d.%y]
+set yesterdate [exec date --date=yesterday +"%m%d%y"]
+set lastmonth [exec date --date=last\ month +"%m%d%y"]
+
+set eaddress "awead@rockhall.org"
+set listnumber "051"
+set recordlist "axw-search-2"
+puts "lastmonth = $lastmonth"
+
+
+# set a general timeout for each command to complete
+
+set timeout 10
+
+# Start the SSH session, 5 possible responses:
+#   Option 1 - No SSH connection available
+#   Option 2 - Unknown host
+#   Option 3 - Not a familiar host
+#   Option 4 - Bad username
+#   Option 5 - Good connection
+
+spawn /usr/bin/ssh -l $un $hostip
+
+expect {
+  "Secure connection to * refused" exit
+  "no address associated with name" exit
+  "The authenticity of host*can't be established*Are you sure you want
+  to continue connecting" exit
+  "Permission denied" exit
+  "password: "
+}
+
+# Good username, now what about the pw?
+#  Option 1 - bad pw
+#  Option 2 - good username
+send "$pw\r"
+expect "Permission denied, please try again" {
+  send "\r\r"
+  exit
+} "Choose one (S,D,C,M,*" {
+  # Keep on going
+}
+
+# From the main menu, output search
+# results to file
+send "a"
+expect "Choose one"
+send "m"
+expect "your initials"
+send "$initials\r"
+expect "your password"
+send "$ipwd\r"
+expect "Choose one (E,B,L,A,*"
+send "d"
+expect "Choose one"
+send "c"
+expect "Enter name of file"
+send "rhla-daily\r"
+expect "File rhla-daily.out already exists!  Overwrite it?" {
+  send "y"
+  expect "overwrite it?"
+  send "y"
+  expect "Choose one"
+} "Choose one"
+send "b"
+expect "Choose one"
+# Cycle through the pages of results until we see ours
+send "f"
+set timeout 1
+while {1} {
+  expect -re "(\[0-9]+) > $recordlist" {
+    send $expect_out(1,string)
+    break
+  }
+  send "f"
+}
+expect "Choose one"
+send "s"
+#expect "Are you sure?" {
+#  send "y"
+#}
+set timeout -1
+#while {1} {
+#  expect "Are you sure?" {
+#    send "y"
+#  }
+#}
+expect "Choose one"
+set timeout 10
+
+# quit out and send file via FTP
+send "q"
+expect "Press <SPACE> to continue"
+send " "
+expect "Choose one"
+send "q"
+expect "Press <SPACE> to continue"
+send " "
+#expect "Choose one"
+# Cycle through lists of filenames 
+#send "f"
+set timeout 1
+while {1} {
+  expect -re "(\[0-9]+) > rhla-daily.out" {
+    set filenumber $expect_out(1,string)
+    break
+  }
+  send "f"
+}
+set timeout 10
+expect "Choose one"
+send "s"
+expect "Enter file number"
+send "$filenumber"
+expect "Choose one"
+#send "+"
+#expect "Choose one"
+send "e"
+expect "Enter host name"
+send "$ftphost\r"
+expect "Username"
+send "$ftpuser\r"
+send "$ftppass\r"
+expect "Choose one"
+send "t"
+expect "rhla-daily.out"
+send "\r"
+set timeout 100
+expect "Transfer complete"
+set timeout 10
+send "c"
+expect "Choose one"
+send "q"
+expect "Press <SPACE>"
+send " "
+expect "Choose one"
+send "q"
+expect "Choose one"
+send "q"
+expect "Choose one"
+send "q"
+expect "Choose one"
+send "q"
+exit 0
+
