@@ -1,0 +1,3 @@
+FTPHOST="ftp.example.com"
+FTPUSER="username"
+FTPPASS="password"

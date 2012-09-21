@@ -1,0 +1,24 @@
+#!/bin/ksh
+#
+# ftp-del
+# 
+# Deletes ftp files in the root directory
+# NOTE: only deletes files in the root path
+#
+# Arguments
+# 1 = ftp host
+# 2 = ftp username
+# 3 = ftp password
+# 4 = file to delete
+#
+
+exec 4>&1
+ftp -nv >&4 2>&4 |&
+
+print -p open $1
+print -p user $2 $3
+print -p del $4
+print -p bye
+
+wait
+exit 0

@@ -1,0 +1,57 @@
+#!/bin/bash
+# ----------------------------------------------------------------------
+# marc-index
+# Adam Wead
+# Rock and Roll Hall of Fame and Museum
+#
+# Description:
+#   Puts the current marc recrod search file from Innopac onto our FTP 
+#   server, then downloads and indexes it into Blacklight.
+#
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# Config
+# ----------------------------------------------------------------------
+
+# Include our config file
+source "bash_config"
+
+REMOTEPATH="rhla-daily.out"
+LOCALPATH="/tmp/rhla-daily.mrc"
+RAILS_ENV="production"
+BLACKLIGHT_APP="/var/www/rails/blacklight-app"
+
+# ----------------------------------------------------------------------
+# Main
+# ----------------------------------------------------------------------
+
+# Delete the old marc file
+./ftp-del $FTPHOST $FTPUSER $FTPPASS $REMOTEPATH > /dev/null
+if [ "$?" -gt "0" ]; then
+  echo "Couldn't delete marc file on $FTPHOST"
+  exit 1;
+fi
+
+# Download marc file from innopac to our ftp server.  Wait 20 minutes
+# for it to run, check every 30 secs, and kill it if it hasn't finished
+# after that
+./timeout3 -t 1200 -i 30 ./download > /dev/null
+if [ "$?" -gt "0" ]; then
+  echo "Expect download script failed or timed out"
+  exit 1;
+fi
+
+# Get the marc file from our ftp server
+source ~/.bash_profile
+wget -q -O $LOCALPATH ftp://$FTPUSER:$FTPPASS@$FTPHOST/$REMOTEPATH
+if [ "$?" -gt "0" ]; then
+  echo "Couldn't download $REMOTEPATH from $FTPHOST"
+  exit 1;
+fi
+
+# Index it into blacklight
+cd $BLACKLIGHT_APP
+export RAILS_ENV=${RAILS_ENV}
+rake solr:marc:index MARC_FILE=$LOCALPATH
+exit 0;

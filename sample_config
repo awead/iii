@@ -4,6 +4,7 @@ set hostip "192.168.1.1"
 # Innopac usernamd and password (via SSH)
 set un "user"
 set pw "password"
+
 # III initials and password, used once you're inside
 set initials "xxx"
 set ipwd "password"
@@ -11,11 +12,10 @@ set ipwd "password"
 # Email address
 set eaddress "foo@bar.org"
 
-# Innopac list number
-set listnumber "001"
-
-# Name of file to save your record list to
-set recordlist "some-name"
-
 # set a general timeout for each command to complete
 set timeout 10
+
+# FTP Host
+set ftphost "example.com"
+set ftpuser "user"
+set ftppass "password"
