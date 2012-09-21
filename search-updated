@@ -1,21 +1,22 @@
 #!/usr/bin/expect --
-# -----------------------------------
+# ------------------------------------------------------------
 # search-updated
 # Adam Wead
-# Rock and Roll Hall of Fame
-#
-# Cribbed from:
-#   summonupd.exp
-#   Ian Richmond
+# Rock and Roll Hall of Fame and Museum
 #
 # Description:
-#  Logs into Innopac server and retrieves marc records
-
-# Start the internal Expect diagnostics and send it to a file
-# exp_internal -f create_dvd_list_diag 0
-
-# Stop the internal diagnostics
-# exp_internal 0
+#   Logs into Innopac server and retrieves last month's 
+#   worth of marc records.
+#
+# Notes:
+#   Start the internal Expect diagnostics and send it to a file
+#     exp_internal -f create_dvd_list_diag 0
+#   Stop the internal diagnostics
+#     exp_internal 0
+#
+#   Props and thanks to Ian Richmond, from whom I took most
+#   of this code!
+# ------------------------------------------------------------
 
 # ------------------------------------------------------------
 #
@@ -23,28 +24,21 @@
 #
 # ------------------------------------------------------------
 
-# Innopac host ip
-set hostip "129.22.104.30"
+# Include our shared config file
+source "config"
 
-# Innopac usernamd and password (via SSH)
-set un "scirc"
-set pw "W1NZE"
-# Initials and Password, used once you're inside
-set initials "axw"
-set ipwd "Rhall11"
-
-# Dates
+# Determine last month's date
 set todaysdate [exec date +%m.%d.%y]
 set yesterdate [exec date --date=yesterday +"%m%d%y"]
 set lastmonth [exec date --date=last\ month +"%m%d%y"]
 
-set eaddress "awead@rockhall.org"
+# Set our list numbers and names
 set listnumber "051"
 set recordlist "axw-search-2"
+
+# Print out date for our own information
 puts "lastmonth = $lastmonth"
 
-# set a general timeout for each command to complete
-set timeout 10
 
 # ------------------------------------------------------------
 #

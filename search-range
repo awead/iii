@@ -2,11 +2,7 @@
 # ------------------------------------------------------------
 # search-range
 # Adam Wead
-# Rock and Roll Hall of Fame
-#
-# Cribbed from:
-#   summonupd.exp
-#   Ian Richmond
+# Rock and Roll Hall of Fame and Museum
 #
 # Description:
 #   Logs into Innopac server and retrieves marc records given
@@ -17,6 +13,9 @@
 #     exp_internal -f create_dvd_list_diag 0
 #   Stop the internal diagnostics
 #     exp_internal 0
+#
+#   Props and thanks to Ian Richmond, from whom I took most
+#   of this code!
 # ------------------------------------------------------------
 
 # ------------------------------------------------------------
@@ -28,7 +27,11 @@
 # Include our shared config file
 source "config"
 
-# Dates: taken from agruments passed to this script and must 
+# List numbers and names
+set listnumber "057"
+set recordlist "axw-range-1"
+
+# Date range is taken from agruments passed to this script and must 
 # be in YYYYMMDD format.
 set fromdate [lindex $argv 0]
 set todate [lindex $argv 1]
