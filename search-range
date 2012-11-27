@@ -32,7 +32,7 @@ set listnumber "057"
 set recordlist "axw-range-1"
 
 # Date range is taken from agruments passed to this script and must 
-# be in YYYYMMDD format.
+# be in MMDDYY format.
 set fromdate [lindex $argv 0]
 set todate [lindex $argv 1]
 
