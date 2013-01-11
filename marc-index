@@ -14,13 +14,8 @@
 # Config
 # ----------------------------------------------------------------------
 
-# Include our config file
+# Get variables from our config file
 source "bash_config"
-
-REMOTEPATH="rhla-daily.out"
-LOCALPATH="/tmp/rhla-daily.mrc"
-RAILS_ENV="production"
-BLACKLIGHT_APP="/var/www/rails/blacklight-app"
 
 # ----------------------------------------------------------------------
 # Main
@@ -53,5 +48,11 @@ fi
 # Index it into blacklight
 cd $BLACKLIGHT_APP
 export RAILS_ENV=${RAILS_ENV}
-rake solr:marc:index MARC_FILE=$LOCALPATH
-exit 0;
+rake solr:marc:index MARC_FILE=$LOCALPATH >& $RAKEOUTPUT
+cat $RAKEOUTPUT
+ERRORS=`grep -c "ERROR" $RAKEOUTPUT`
+if [ $ERRORS -gt 0 ]; then
+  exit 1;
+else
+  exit 0;
+fi
