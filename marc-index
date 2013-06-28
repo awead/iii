@@ -22,11 +22,7 @@ source "bash_config"
 # ----------------------------------------------------------------------
 
 # Delete the old marc file
-./ftp-del $FTPHOST $FTPUSER $FTPPASS $REMOTEPATH > /dev/null
-if [ "$?" -gt "0" ]; then
-  echo "Couldn't delete marc file on $FTPHOST"
-  exit 1;
-fi
+/bin/rm -f $REMOTEPATH
 
 # Download marc file from innopac to our ftp server.  Wait 20 minutes
 # for it to run, check every 30 secs, and kill it if it hasn't finished
@@ -37,21 +33,18 @@ if [ "$?" -gt "0" ]; then
   exit 1;
 fi
 
-# Get the marc file from our ftp server
-source ~/.bash_profile
-wget -q -O $LOCALPATH ftp://$FTPUSER:$FTPPASS@$FTPHOST/$REMOTEPATH
-if [ "$?" -gt "0" ]; then
-  echo "Couldn't download $REMOTEPATH from $FTPHOST"
-  exit 1;
-fi
+# Copy the marc file for Blacklight
+/bin/cp -f $REMOTEPATH $LOCALPATH
 
 # Index it into blacklight
+source ~/.bash_profile
 cd $BLACKLIGHT_APP
 export RAILS_ENV=${RAILS_ENV}
 rake solr:marc:index MARC_FILE=$LOCALPATH >& $RAKEOUTPUT
 cat $RAKEOUTPUT
 ERRORS=`grep -c "ERROR" $RAKEOUTPUT`
 if [ $ERRORS -gt 0 ]; then
+  /bin/cat $RAKEOUTPUT
   exit 1;
 else
   exit 0;
