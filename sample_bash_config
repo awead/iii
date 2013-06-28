@@ -1,6 +1,3 @@
-FTPHOST="ftp.example.com"
-FTPUSER="username"
-FTPPASS="password"
 REMOTEPATH="rhla-daily.out"
 LOCALPATH="/tmp/rhla-daily.mrc"
 RAILS_ENV="production"
