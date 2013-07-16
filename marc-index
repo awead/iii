@@ -34,7 +34,12 @@ if [ "$?" -gt "0" ]; then
 fi
 
 # Copy the marc file for Blacklight
-/bin/cp -f $REMOTEPATH $LOCALPATH
+if [ -e $REMOTEPATH ]; then
+	/bin/cp -f $REMOTEPATH $LOCALPATH
+else
+	echo "Marc file failed to download or was not found"
+	exit 1;
+fi
 
 # Index it into blacklight
 source ~/.bash_profile
