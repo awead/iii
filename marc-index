@@ -46,6 +46,12 @@ source ~/.bash_profile
 cd $BLACKLIGHT_APP
 export RAILS_ENV=${RAILS_ENV}
 rake solr:marc:index MARC_FILE=$LOCALPATH >& $RAKEOUTPUT
+if [ "$?" -gt "0" ]; then
+  echo "Rake task failed"
+  exit 1;
+fi
+
+# Check output from SolrMarc for any errors
 cat $RAKEOUTPUT
 ERRORS=`grep -c "ERROR" $RAKEOUTPUT`
 if [ $ERRORS -gt 0 ]; then
