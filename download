@@ -18,8 +18,12 @@
 # Include our shared config file
 source "config"
 
-# The name of the record list we want to download
-set recordlist "axw-search-2"
+# Determine the name of the record list we want to download
+if { $argv == "" } {
+  set recordlist "axw-search-2"
+} else {
+  set recordlist [lindex $argv 0]
+}
 
 # ------------------------------------------------------------
 #
