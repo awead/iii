@@ -2,3 +2,5 @@
 config
 bash_config
 .DS_Store
+
+nohup.out

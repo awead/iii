@@ -2,13 +2,27 @@
 
 Assorted expect scripts for getting our marc records out of Millennium.
 
-### Searching Ranges of Records
+### Searching By Date
 
-Search for marc records created during a certain time frame, expressed in MMDDYY, and download them to the your ftp server.
-For example, to get all the records in the year 2012:
+Search by creation date, given various parameters, expressed as MMDDYY.
 
-    search-range 010112 123112
+##### Date Range
+
+Search for marc records created between two dates and download them to the your ftp server.
+All dates are 21st-century. For example, to get all the records in the year 2012:
+
+    search-range 123111 010113
     download axw-range-1
+
+Note: dates are exclusive.
+
+##### Before Date
+
+Return records created before a given date. For example:
+
+    search-before 010200
+
+This will return records created on or before January 1, 2000.
 
 ### Searching Latest Records
 
