@@ -39,3 +39,8 @@ to see if it's done:
 
     timeout3 -t 3600 -i 30 search-updated
 
+### Download All Records
+
+Innopac limits the size of downloaded files to 5000 records, so we have to split them up by date to ensure that no single file
+exceeds that number of records.  Use the `download-all` script to download all marc records in batches, each less than
+50000 in size.  The date ranges are all arbitrary, but 3-6 month intervals seems to be a good metric.

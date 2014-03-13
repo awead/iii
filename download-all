@@ -1,0 +1,31 @@
+#!/bin/bash
+# ------------------------------------------------------------
+# download-all
+# Adam Wead
+# Rock and Roll Hall of Fame and Museum
+#
+# Description:
+#   Downloads all marc records in batches according to dates
+# ------------------------------------------------------------
+
+./search-before 010200
+./download axw-before-1
+mv /home/innopac/rhla-daily.out ~/marc/before-010100.mrc
+./search-range 010100 100211
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/010100to100111.mrc
+./search-range 100111 030212
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/100111to030112.mrc
+./search-range 030112 010213
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/030112to010113.mrc
+./search-range 010113 060213
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/010113to060113.mrc
+./search-range 060113 010214
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/060113to010114.mrc
+./search-range 010114 060214
+./download axw-range-1
+mv /home/innopac/rhla-daily.out ~/marc/010114to060214.mrc
