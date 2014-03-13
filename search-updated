@@ -27,10 +27,11 @@
 # Include our shared config file
 source "config"
 
-# Determine last month's date
+# Determine out dates
+# "Last month" is technically 15 days ago
 set todaysdate [exec date +%m.%d.%y]
 set yesterdate [exec date --date=yesterday +"%m%d%y"]
-set lastmonth [exec date --date=last\ month +"%m%d%y"]
+set lastmonth [exec date --date=15\ days\ ago +"%m%d%y"]
 
 # Set our list numbers and names
 set listnumber "051"
@@ -141,6 +142,14 @@ send "11"
 expect "Enter boolean condition"
 send ">"
 expect "UPDATED"
+send "$lastmonth"
+expect "Enter action"
+send "o"
+expect "Enter code"
+send "10"
+expect "Enter boolean condition"
+send ">"
+expect "CREATED"
 send "$lastmonth"
 expect "Enter action"
 send "s"
