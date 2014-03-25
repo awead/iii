@@ -45,7 +45,7 @@ fi
 source ~/.bash_profile
 cd $BLACKLIGHT_APP
 export RAILS_ENV=${RAILS_ENV}
-bundle exec rake solr:marc:index MARC_FILE=$LOCALPATH >& $RAKEOUTPUT
+bundle exec rake rockhall:marc:index MARC_FILE=$LOCALPATH >& $RAKEOUTPUT
 if [ "$?" -gt "0" ]; then
   echo "Rake task failed"
   cat $RAKEOUTPUT
